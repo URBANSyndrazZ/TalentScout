@@ -1,0 +1,17 @@
+{
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "rpcUrl": "https://testnet-rpc.monad.xyz",
+  "explorer": "https://testnet.monadscan.com",
+  "contractAddress": "0xAB01cfA7Da5e44df314bA167C9f262f17CF6dda7",
+  "deployer": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+  "txHash": "0x3adf5a2ea57a14233e01d46a4e7f6c6bbc77f92bfe3c0d87874c67c4cfc38729",
+  "blockNumber": 71712250,
+  "deployedAt": "2026-10-17T03:19:40.400Z",
+  "profileRegistry": {
+    "address": "0x1d057b116e208dfb83D8D9c9D3E360442311AaDE",
+    "txHash": "0xab8370edd673b3f89aa7b6ded96d7028d30c5a72a8dfc3efe91285b25cacc692",
+    "blockNumber": 71723238,
+    "deployedAt": "2026-10-17T04:15:01.605Z"
+  }
+}

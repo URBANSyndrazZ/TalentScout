@@ -1,0 +1,22 @@
+{
+  "name": "talentscout",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TalentScout 链上星探 —— Monad Blitz 黑客松（自荐卡 + 人气投票 + 打赏/留言 + 推荐池）",
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "deploy": "node scripts/deploy.mjs",
+    "deploy-profile": "node scripts/deploy-profile.mjs",
+    "seed": "node scripts/seed.mjs",
+    "seed-profiles": "node scripts/seed-profiles.mjs",
+    "sponsor": "node scripts/sponsor.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "ethers": "^6.17.0",
+    "qrcode": "^1.5.4",
+    "solc": "0.8.37"
+  }
+}

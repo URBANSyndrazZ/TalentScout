@@ -1,0 +1,40 @@
+# ═══════════ 私钥与本地环境（绝不能提交）═══════════
+# 这三处含真实测试网私钥：.env（deployer / organizer）、.burner.json（手机小号）、
+# .demo-wallets.json（W1-W4 彩排钱包）。丢了它们等于把项目的钥匙交出去。
+.env
+.env.*
+!.env.example
+.burner.json
+.demo-wallets.json
+
+# ═══════════ 作战手册（自己人用的，不进公开仓库）═══════════
+# DEMO.md      现场逐字稿 + 钱包地址与余额 + 应急方案
+# 答辩Q&A.md    路演口径 + 已知短板与边界（赛前不想公开）
+# 录屏脚本.md   视频分镜与拍摄安排
+DEMO.md
+docs/答辩Q&A.md
+docs/录屏脚本.md
+
+# ═══════════ 依赖与产物 ═══════════
+node_modules/
+
+# ═══════════ 现场生成、与网络环境绑定 ═══════════
+# 二维码里是当天那台笔记本的局域网 IP（172.20.10.x 之类），换网络就失效，
+# 别人 clone 下来也扫不开。演示前用 `npm run makeqr` 现生成即可。
+docs/qr-*.png
+
+# ═══════════ 临时/预览文件 ═══════════
+# 约定：以 _ 开头的图都是"看一眼就删"的临时预览（如 docs/_preview-now.png）
+docs/_*.png
+
+# ═══════════ 编辑器 / 系统垃圾 ═══════════
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ═══════════ 说明：这些"生成物"是**故意提交**的 ═══════════
+#   artifacts/*.json         编译产物——部署脚本要读，也是"部署的到底是哪份字节码"的凭据
+#   frontend/contract.config.js  自动生成，但提交后 clone 下来就能直连已部署的测试网合约
+#   frontend/fallback.json   链上状态快照——断网兜底用的，提交后离线也能演示
+#   docs/screenshot-*.png    README 引用的界面截图

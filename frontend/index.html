@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<!-- viewport-fit=cover 是安全区变量（env(safe-area-inset-*)）生效的前提：
+     现场用手机扫码打开时，粘性顶栏 / 弹窗不会被刘海和底部横条压住 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" id="themeColor" content="#100f12" />
+<title>TalentScout · 链上星探</title>
+
+<!-- Inter Tight 只取 400 / 500 两个字重：编辑风的「重」来自字号、字距与留白，不来自字重。
+     用 media="print" + onload 换回 all 的写法让字体**不阻塞首屏** ——
+     演示现场网络（以及纯离线快照场景）里 fonts.googleapis.com 可能不可达，
+     普通 <link rel="stylesheet"> 会挂住渲染；加载不到就整体退回 Helvetica / Arial + 系统中文字体。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500&display=swap" /></noscript>
+
+<style>
+/* ═══════════ 主题变量 ═══════════
+   两套配色是同一套「编辑风」语言：纸 + 墨 + 发丝线 + 颗粒，只有明度反转。
+   变量名沿用纸白基准：--fg 是「墨」（前景/文字），--shade 是「纸」（背景）。
+   默认（body 无 class）= 夜间；body.light = 白天。切换逻辑见 app.js 的 applyTheme()。 */
+:root{
+  --fg:#eceae4;
+  --fg-soft:rgba(236,234,228,.62);
+  --fg-faint:rgba(236,234,228,.40);
+  --shade:#100f12;
+  --shade-rgb:16,15,18;
+  --surface:#171619;
+  --surface-2:#1d1c20;
+  --field:#131215;
+  --rule:rgba(236,234,228,.15);
+  --rule-soft:rgba(236,234,228,.085);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --pill-bg:#f2f0ec;
+  --pill-fg:#0d0c0b;
+  --pill-bg-hover:#ffffff;
+  --accent:#a99bff;
+  --gold:#e3c489;
+  --ok:#8fd0ab;   --ok-bg:rgba(143,208,171,.10); --ok-line:rgba(143,208,171,.34);
+  --bad:#e9a2a2;  --bad-bg:rgba(233,162,162,.10); --bad-line:rgba(233,162,162,.34);
+  --warn:#e3c489; --warn-bg:rgba(227,196,137,.10); --warn-line:rgba(227,196,137,.34);
+  --band-ink:#0d0c0b;        /* 卡片色带一律是亮色（见 app.js 的 THEMES），所以带上的字固定用墨黑 */
+  --glass:rgba(255,255,255,.045);
+  --glass-2:rgba(255,255,255,.085);
+  --glass-line:rgba(255,255,255,.16);
+  --glass-hi:rgba(255,255,255,.22);
+  --amb-op:.72;              /* 环境色场的强度：卡片自己那层色晕才是主力，这层只是底味 */
+  --glass-shadow:0 14px 34px rgba(0,0,0,.38);
+  --glass-shadow-hover:0 22px 52px rgba(0,0,0,.50);
+  --grain-op:.10; --grain-blend:screen;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 44px rgba(0,0,0,.44);
+  --shadow-sm:0 2px 10px rgba(0,0,0,.34);
+  --r:3px;                 /* 面板/输入框用小圆角（印刷物的直角感） */
+  --r-pill:999px;           /* 药丸：按钮、标签、角标 */
+  --font:'Inter Tight','Helvetica Neue',Helvetica,Arial,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;
+}
+body.light{
+  --fg:#0d0c0b;
+  --fg-soft:rgba(13,12,11,.64);
+  --fg-faint:rgba(13,12,11,.42);
+  --shade:#f2f0ec;
+  --shade-rgb:242,240,236;
+  --surface:#f8f7f4;
+  --surface-2:#eae7e1;
+  --field:#fffefc;
+  --rule:rgba(13,12,11,.16);
+  --rule-soft:rgba(13,12,11,.075);
+  --pill-bg:#0a0908;
+  --pill-fg:#ffffff;
+  --pill-bg-hover:#000000;
+  --accent:#4d3fa8;
+  --gold:#8a6a1f;
+  --ok:#2f6b4f;   --ok-bg:#e9f0ea; --ok-line:rgba(47,107,79,.30);
+  --bad:#8f3a3a;  --bad-bg:#f7eae9; --bad-line:rgba(143,58,58,.30);
+  --warn:#7a5a1e; --warn-bg:#f8f1e1; --warn-line:rgba(122,90,30,.30);
+  --glass:rgba(255,255,255,.30);
+  --glass-2:rgba(255,255,255,.52);
+  /* 白天背景本来就是白的，白色描边等于没有边 —— 换成一道极淡的墨线，像玻璃片的磨边 */
+  --glass-line:rgba(13,12,11,.07);
+  --glass-hi:rgba(255,255,255,.95);
+  --amb-op:.55;
+  --glass-shadow:0 12px 28px rgba(52,40,110,.10);
+  --glass-shadow-hover:0 22px 46px rgba(52,40,110,.17);
+  --grain-op:.13; --grain-blend:multiply;
+  --shadow:0 1px 2px rgba(13,12,11,.05), 0 16px 38px rgba(13,12,11,.09);
+  --shadow-sm:0 1px 2px rgba(13,12,11,.07), 0 8px 20px rgba(13,12,11,.05);
+}
+
+/* ── 基础重置 ── */
+*{ box-sizing:border-box; }
+/* hidden 属性默认是 UA 的 display:none，会被 .grid{display:grid} 之类的规则覆盖掉，
+   所以显式加一条：任何带 hidden 的元素都不渲染（切视图 / 兜底提示全靠它） */
+[hidden]{ display:none !important; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+/* 锚点跳转要给粘性顶栏留出高度，否则标题会被顶栏盖住 */
+#publish, #board{ scroll-margin-top:88px; }
+body{
+  margin:0; min-height:100vh; background:var(--shade); color:var(--fg);
+  font-family:var(--font); font-weight:400; font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  /* 用 clip 而不是 hidden：overflow-x:hidden 会把 body 变成滚动容器，粘性顶栏（.chrome）就失效了 */
+  overflow-x:clip;
+  transition:background-color .3s var(--ease), color .3s var(--ease);
+}
+body.big{ font-size:18px; }
+body.big .wrap, body.big .chrome-in{ max-width:1440px; }
+body.big .grid{ grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); }
+
+/* ── 环境色场 ──
+   玻璃卡片必须有东西可"透"：纸面本身是平的，对着平面做 backdrop-blur 等于没做。
+   所以最底下铺一层极淡的彩色光晕 —— 卡片透出它、模糊掉它，玻璃感才成立。 */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:var(--amb-op);
+  background:
+    radial-gradient(42% 34% at 16% 12%, rgba(255,138,114,.22), rgba(255,138,114,0) 100%),
+    radial-gradient(46% 38% at 86% 6%,  rgba(123,184,255,.24), rgba(123,184,255,0) 100%),
+    radial-gradient(48% 42% at 78% 74%, rgba(180,156,255,.22), rgba(180,156,255,0) 100%),
+    radial-gradient(44% 38% at 8% 84%,  rgba(111,211,154,.20), rgba(111,211,154,0) 100%);
+}
+
+/* ── 颗粒：极细的 SVG 湍流噪点，避免大片纸白/近黑出现色带 ──
+   压在最上面（z-index:1，内容之下），混色模式按主题反转（纸白 multiply、夜间 screen）。 */
+.grain{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  opacity:var(--grain-op); mix-blend-mode:var(--grain-blend);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.5'/></svg>");
+}
+
+/* ── 顶部发丝滚动进度条（东西是真在滚的，所以这条线是真的进度） ── */
+.meter{
+  position:fixed; top:0; left:0; z-index:50; height:2px; width:100%;
+  transform:scaleX(0); transform-origin:0 50%; background:var(--fg); opacity:.55;
+}
+
+/* ── 顶栏：满幅发丝 + 映射到内容宽度的 .chrome-in ──
+   底部用渐变收边（而不是一条硬线），滚动时内容从纸面里淡出来。 */
+.chrome{
+  position:sticky; top:0; z-index:40;
+  background:linear-gradient(to bottom,
+    rgba(var(--shade-rgb),.96) 0%, rgba(var(--shade-rgb),.84) 62%, rgba(var(--shade-rgb),0) 100%);
+  -webkit-backdrop-filter:blur(12px) saturate(1.05);
+  backdrop-filter:blur(12px) saturate(1.05);
+}
+.chrome-in{
+  max-width:1120px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:max(14px, calc(env(safe-area-inset-top, 0px) + 12px)) clamp(16px, 3.4vw, 44px) 14px;
+}
+/* flex:0 0 auto —— 品牌名不参与收缩：它一被压缩，文字就会溢出到心跳角标底下。
+   空间不够时先让 .ticker 自己缩（下面有 min-width:0 + 省略号）。 */
+.mark{ display:flex; align-items:baseline; gap:8px; font-size:15px; letter-spacing:-.012em; flex:0 0 auto; }
+.mark b{ font-weight:500; white-space:nowrap; }
+.mark-star{ opacity:.85; }
+.mark-sub{ font-size:12.5px; color:var(--fg-faint); white-space:nowrap; }
+.nav{ display:flex; align-items:center; gap:clamp(8px, 1.5vw, 18px); flex-shrink:0; }
+
+/* 安静的文字型控件（切主题 / 投影模式） */
+.lnk{
+  display:inline-flex; align-items:center; min-height:36px; padding:0 2px;
+  background:none; border:0; font-family:inherit; font-size:14px; letter-spacing:-.008em;
+  color:var(--fg); opacity:.88; cursor:pointer; white-space:nowrap;
+  transition:opacity .3s var(--ease);
+}
+.lnk:hover{ opacity:1; }
+.lnk:focus-visible{ outline:2px solid var(--fg); outline-offset:3px; border-radius:2px; }
+
+/* 唯一的高对比元素：药丸。夜里是纸白药丸 + 墨字，白天反过来。 */
+.pill{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  height:40px; padding:0 21px; border-radius:var(--r-pill);
+  background:var(--pill-bg); color:var(--pill-fg);
+  border:1px solid var(--rule); font-family:inherit;
+  font-size:14.5px; font-weight:500; letter-spacing:-.008em; text-decoration:none; white-space:nowrap;
+  cursor:pointer; opacity:1;
+  -webkit-text-fill-color:var(--pill-fg);   /* 必须：否则继承来的链接色会在移动端 Safari 里渗进深色药丸 */
+  box-shadow:0 1px 0 rgba(255,255,255,.10) inset;
+  transition:transform .4s var(--ease), background .3s var(--ease), opacity .3s var(--ease);
+}
+.pill:hover, .pill:focus-visible{ transform:translateY(-2px); background:var(--pill-bg-hover); }
+.pill:focus-visible{ outline:2px solid var(--fg); outline-offset:2px; }
+.pill:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.pill .sm{ display:none; }
+
+/* 区块心跳角标 */
+.ticker{
+  display:inline-flex; align-items:center; gap:8px; max-width:min(38vw, 360px);
+  flex-shrink:1; min-width:0; overflow:hidden;
+  font-family:var(--mono); font-size:12px; font-variant-numeric:tabular-nums;
+  color:var(--fg-soft); background:var(--surface-2); border:1px solid var(--rule);
+  border-radius:var(--r-pill); padding:5px 12px; white-space:nowrap;
+}
+.ticker .dot{
+  flex:0 0 auto; width:6px; height:6px; border-radius:50%; background:var(--ok);
+  animation:pulse 1.8s var(--ease) infinite;
+}
+@keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.35; transform:scale(.8); } }
+/* 窄屏留白不够时块号会被截成 "…"（那个发光小圆点还在跳，"链上是活的"这个信息不丢） */
+.ticker .tk-txt{ display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.ticker b{ color:var(--fg); font-weight:500; }
+
+/* ═══════════ 版心与版块标题 ═══════════ */
+.wrap{
+  position:relative; z-index:2;
+  max-width:1120px; margin:0 auto;
+  padding:clamp(20px, 3vw, 34px) clamp(16px, 3.4vw, 44px)
+          max(40px, calc(env(safe-area-inset-bottom, 0px) + 32px));
+}
+.acct{ margin:0 0 4px; font-size:12.5px; color:var(--fg-faint); }
+.acct b{ color:var(--fg); font-weight:500; }
+
+/* 小标签：等宽 + 宽字距，像排版里的栏目标签 */
+.kicker{
+  margin:0; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--fg-faint);
+}
+h2{ margin:6px 0 0; font-size:clamp(19px, 2vw, 26px); font-weight:400; letter-spacing:-.02em; line-height:1.25; }
+h3{ font-size:16px; font-weight:500; letter-spacing:-.01em; margin:0; }
+/* 版块头：一条发丝线把它和上一段切开 */
+.sec-head{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:14px 20px; flex-wrap:wrap;
+  padding-top:clamp(30px, 4.4vw, 52px); margin-bottom:clamp(14px, 2vw, 20px);
+  border-top:1px solid var(--rule);
+}
+.panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.small{ font-size:13px; }
+.muted{ color:var(--fg-soft); }
+.sub{ color:var(--fg-soft); font-size:13.5px; }
+
+/* ═══════════ 首屏 ═══════════ */
+.hero{
+  padding:clamp(30px, 5.4vw, 66px) 0 clamp(26px, 4vw, 54px);
+  border-bottom:1px solid var(--rule);
+}
+/* 中文用 em 而不是 ch 限宽：ch 基于 "0" 的宽度，对全角汉字会窄得离谱 */
+.hero h1{
+  margin:16px 0 0; max-width:16em;
+  font-size:clamp(30px, 5.6vw, 66px); font-weight:400; line-height:1.1; letter-spacing:-.03em;
+  text-wrap:balance;
+}
+.lead{
+  margin:clamp(16px, 2.2vw, 24px) 0 0; max-width:32em;
+  font-size:clamp(15px, 1.2vw, 18px); line-height:1.7; color:var(--fg-soft);
+  text-wrap:pretty;
+}
+.lead b{ font-weight:500; color:var(--fg); }
+.cta{ display:flex; align-items:center; flex-wrap:wrap; gap:10px 20px; margin-top:clamp(22px, 3vw, 34px); }
+.cta .pill{ height:48px; padding:0 27px; font-size:15px; }
+.fine{
+  margin:clamp(22px, 3vw, 32px) 0 0; padding-top:14px; border-top:1px solid var(--rule-soft);
+  /* anywhere 而不是 break-all：长 hex 地址能断行，但 ProfileRegistry 这种单词仍优先按空格换行 */
+  font-family:var(--mono); font-size:12px; line-height:1.9; color:var(--fg-faint); overflow-wrap:anywhere;
+}
+.fine .sep{ padding:0 8px; opacity:.6; }
+
+/* ═══════════ 数据条 ═══════════ */
+.stats{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+}
+.stat{ padding:clamp(16px, 2.2vw, 24px) clamp(12px, 1.6vw, 20px); border-left:1px solid var(--rule); min-width:0; }
+.stat:first-child{ border-left:0; }
+.stat .num{
+  font-size:clamp(26px, 3.4vw, 40px); font-weight:400; line-height:1; letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums;
+}
+.stat .lab{ margin-top:9px; font-size:11.5px; letter-spacing:.1em; color:var(--fg-faint); }
+
+/* ═══════════ 面板 / 表单 ═══════════ */
+.card{
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--r);
+  padding:clamp(14px, 1.8vw, 20px) clamp(15px, 1.9vw, 22px); margin:0 0 14px;
+}
+.cols{ display:grid; grid-template-columns:1fr 1fr; gap:0 clamp(16px, 2.4vw, 28px); }
+input, textarea, select{
+  width:100%; background:var(--field); color:var(--fg); border:1px solid var(--rule);
+  border-radius:var(--r); padding:10px 12px; font-size:14px; font-family:inherit; line-height:1.5;
+  transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+input:focus, textarea:focus, select:focus{
+  outline:none; border-color:var(--fg); box-shadow:0 0 0 3px var(--rule-soft);
+}
+input::placeholder, textarea::placeholder{ color:var(--fg-faint); }
+textarea{ resize:vertical; min-height:72px; }
+label{ display:block; font-size:11.5px; letter-spacing:.06em; color:var(--fg-faint); margin:14px 0 6px; }
+code{
+  font-family:var(--mono); font-size:.9em; background:var(--surface-2);
+  border:1px solid var(--rule-soft); padding:1px 5px; border-radius:2px;
+}
+a{ color:inherit; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px;
+   text-decoration-color:var(--rule); transition:text-decoration-color .3s var(--ease), color .3s var(--ease); }
+a:hover{ text-decoration-color:currentColor; }
+.row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.between{ justify-content:space-between; }
+
+/* ═══════════ 按钮 ═══════════ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  min-height:38px; padding:9px 18px; border-radius:var(--r-pill);
+  background:var(--pill-bg); color:var(--pill-fg); -webkit-text-fill-color:var(--pill-fg);
+  border:1px solid var(--rule); font-family:inherit; font-size:14px; font-weight:500; letter-spacing:-.008em;
+  cursor:pointer; box-shadow:0 1px 0 rgba(255,255,255,.08) inset;
+  transition:transform .3s var(--ease), background .3s var(--ease), color .3s var(--ease),
+             border-color .3s var(--ease), opacity .3s var(--ease);
+}
+.btn:hover:not(:disabled){ transform:translateY(-1px); background:var(--pill-bg-hover); }
+.btn:active:not(:disabled){ transform:translateY(0); }
+.btn:disabled{ opacity:.42; cursor:not-allowed; box-shadow:none; }
+.btn:focus-visible{ outline:2px solid var(--fg); outline-offset:2px; }
+.btn.ghost{
+  background:transparent; color:var(--fg); -webkit-text-fill-color:var(--fg);
+  border-color:var(--rule); box-shadow:none; font-weight:400;
+}
+.btn.ghost:hover:not(:disabled){ background:transparent; border-color:var(--fg); }
+.btn.small{ min-height:34px; padding:6px 14px; font-size:13px; }
+.btn.gold{
+  background:transparent; border-color:var(--gold); color:var(--gold);
+  -webkit-text-fill-color:var(--gold);
+}
+.btn.gold:hover:not(:disabled){ background:var(--warn-bg); border-color:var(--gold); }
+.btn.green{
+  background:transparent; border-color:var(--ok-line); color:var(--ok);
+  -webkit-text-fill-color:var(--ok);
+}
+.btn.green:hover:not(:disabled){ background:var(--ok-bg); border-color:var(--ok); }
+
+/* ═══════════ 卡片墙 ═══════════ */
+.grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(258px, 1fr)); gap:clamp(12px, 1.6vw, 18px); }
+.cand{
+  position:relative; overflow:hidden; cursor:pointer;
+  /* 微椭圆：横竖半径不同（28 / 24），比正圆角软一档；
+     玻璃片 = 半透明底 + backdrop 模糊 + 1px 亮边 + 顶边一道内高光 */
+  border-radius:28px / 24px;
+  background:linear-gradient(160deg, var(--glass-2) 0%, var(--glass) 58%, var(--glass) 100%);
+  border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);
+  backdrop-filter:blur(14px) saturate(1.4);
+  box-shadow:0 1px 0 var(--glass-hi) inset, var(--glass-shadow);
+  transition:transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.cand:hover{
+  transform:translateY(-3px); border-color:var(--glass-hi);
+  box-shadow:0 1px 0 var(--glass-hi) inset, var(--glass-shadow-hover);
+}
+/* 玻璃里那层色：由卡片自己的主题色（--t，app.js 写成 "r,g,b"）从顶部晕下来。
+   这是"这是块有色玻璃"最直接的信号 —— 只靠模糊一层平背景是看不出玻璃的。
+   z-index:-1 让它落在卡身背景之上、内容之下（.cand 因 backdrop-filter 已是层叠上下文）。 */
+.cand::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(105% 62% at 50% -4%, rgba(var(--t,255,255,255), .34), rgba(var(--t,255,255,255), 0) 100%),
+    radial-gradient(80% 55% at 8% 104%, rgba(var(--t,255,255,255), .18), rgba(var(--t,255,255,255), 0) 100%);
+}
+.cand .band{ height:64px; display:flex; align-items:center; gap:11px; padding:0 15px; color:var(--band-ink); position:relative; }
+.cand .avatar{
+  flex:0 0 auto; width:34px; height:34px; border-radius:50%;
+  background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.75);
+  color:var(--band-ink);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:500; letter-spacing:0;
+}
+.cand .name{ font-size:15px; font-weight:500; letter-spacing:-.01em; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cand .body{ padding:13px 14px 14px; }
+.cand .tagline{
+  color:var(--fg-soft); font-size:13px; line-height:1.6; margin:0 0 10px;
+  min-height:42px; overflow-wrap:anywhere;
+}
+/* align-items:center 是防御性的：只要一行里有一个被撑高的元素，
+   flex 默认的 stretch 会把同排所有 chip 一起拉成椭圆（人气榜就是踩了这个坑） */
+.chips{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:11px; }
+/* 技能标签按内容取色（--h 由 app.js 用文本哈希从一组色相里挑），
+   同一门技能在任何卡片上永远是同一个颜色。默认是夜间配方，白天在 body.light 里覆盖。 */
+.chip{
+  --h:262;
+  font-size:11.5px; letter-spacing:.01em; line-height:1.5; white-space:nowrap;
+  padding:3px 10px; border-radius:var(--r-pill);
+  color:hsl(var(--h),78%,78%);
+  background:hsl(var(--h),80%,64%,.14);
+  border:1px solid hsl(var(--h),74%,64%,.34);
+}
+/* 类名必须跟简历面板的 .resume 区分开 —— 同名会互相覆盖（padding/圆角全被改掉） */
+.chip-resume{ border-color:var(--ok-line); color:var(--ok); background:var(--ok-bg); }
+/* 白天的色相要压深一档，否则浅色标签浮在白玻璃上看不清；
+   :not(.chip-resume) 是为了让「链上简历」保持它的语义绿，不被色相轮转覆盖 */
+body.light .chip:not(.chip-resume){
+  color:hsl(var(--h),70%,31%);
+  background:hsl(var(--h),92%,58%,.15);
+  border-color:hsl(var(--h),76%,50%,.34);
+}
+.cand .metrics{
+  display:flex; gap:14px; flex-wrap:wrap;
+  padding-top:11px; border-top:1px solid var(--rule-soft);
+  font-size:12.5px; color:var(--fg-faint); font-variant-numeric:tabular-nums;
+}
+.cand .metrics b{ color:var(--fg); font-weight:500; }
+/* 角标压在色块上，所以用固定的深色玻璃底 + 白字（不跟随主题，否则白天会变成深绿压深底） */
+.badge{
+  position:absolute; top:10px; right:10px; z-index:1;
+  background:rgba(10,9,8,.60); color:#fff; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  font-size:11.5px; font-weight:500; letter-spacing:.01em;
+  padding:4px 10px; border-radius:var(--r-pill);
+}
+.badge.mine{ top:40px; color:#8fd0ab; }
+
+/* 不支持的浏览器玻璃感会整个消失，那就把底色补实，保证字还看得清 */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .cand{ background:var(--surface); }
+}
+
+/* 领奖台：三张卡底部对齐，靠「色带高度差 + 名次牌 + 边框层级」做出 1/2/3 的层次
+   —— 原来只给冠军加一圈金边，层次不够，三张卡看起来一样高 */
+.podium{ display:grid; grid-template-columns:1fr 1.28fr 1fr; gap:clamp(12px, 1.6vw, 18px); align-items:end; }
+.podium .cand{ margin:0; }
+.podium .rank-1{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold), var(--glass-shadow-hover); }
+.podium .rank-2{ border-color:rgba(236,234,228,.34); }
+.podium .rank-3{ border-color:rgba(236,234,228,.18); }
+body.light .podium .rank-2{ border-color:rgba(13,12,11,.30); }
+body.light .podium .rank-3{ border-color:rgba(13,12,11,.16); }
+.podium .rank-1 .band{ height:96px; }
+.podium .rank-2 .band{ height:78px; }
+.podium .rank-3 .band{ height:66px; }
+.podium .rank-1 .name{ font-size:19px; }
+.podium .medal{
+  position:absolute; top:0; left:0; z-index:2;
+  width:30px; height:30px; display:grid; place-items:center;
+  font-family:var(--mono); font-size:13px; font-weight:500;
+  /* 卡片色带一律是亮色（见 --band-ink），所以名次牌用墨底反白——两种主题下都成立 */
+  background:var(--band-ink); color:#f2f0ec;
+  border-radius:0 0 var(--r-pill) 0;
+}
+/* 金光闪卡改画在外圈：玻璃卡的内阴影会被不透明的色带盖住 */
+.cand.flash{ border-color:var(--gold); animation:glowPulse 1.4s var(--ease) 4; }
+@keyframes glowPulse{
+  0%,100%{ box-shadow:0 0 0 1px var(--gold), var(--glass-shadow); }
+  50%{ box-shadow:0 0 0 3px var(--gold), 0 0 34px rgba(227,196,137,.55); }
+}
+
+/* ═══════════ 视图切换：下划线标签页（比药丸组更安静，也更像目录） ═══════════ */
+.tabs{ display:flex; align-items:center; gap:clamp(14px, 2vw, 22px); flex-wrap:wrap; }
+.tab{
+  background:none; border:0; border-bottom:1px solid transparent; padding:8px 0 6px;
+  font-family:inherit; font-size:13.5px; font-weight:400; letter-spacing:-.005em;
+  color:var(--fg-faint); cursor:pointer; white-space:nowrap;
+  transition:color .3s var(--ease), border-color .3s var(--ease);
+}
+.tab:hover{ color:var(--fg-soft); }
+.tab.on{ color:var(--fg); border-bottom-color:var(--fg); }
+.filter{ max-width:190px; }
+
+/* ═══════════ 弹窗：一张压在暗纱上的纸 ═══════════ */
+.modal-back{
+  position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  padding:18px; background:rgba(var(--shade-rgb),.74);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  animation:fadeIn .18s var(--ease);
+}
+@keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+.modal{
+  width:min(760px, 100%); max-height:min(88vh, 920px); overflow:auto;
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--r);
+  box-shadow:var(--shadow); animation:popIn .22s var(--ease);
+}
+@keyframes popIn{ from{ transform:translateY(10px); opacity:0 } to{ transform:none; opacity:1 } }
+.modal::-webkit-scrollbar, .msg-scroll::-webkit-scrollbar{ width:10px; }
+.modal::-webkit-scrollbar-thumb, .msg-scroll::-webkit-scrollbar-thumb{
+  background:var(--rule); border-radius:99px; border:3px solid transparent; background-clip:content-box;
+}
+.modal .top{ padding:16px 18px; color:var(--band-ink); }
+/* 页眉压在亮色色带上：里面的按钮用白玻璃 + 墨字，
+   不能继承 --fg（夜间 --fg 是米白，压在亮带上就看不见了） */
+.modal .top .btn{
+  background:rgba(255,255,255,.45); border-color:rgba(255,255,255,.66);
+  color:var(--band-ink); -webkit-text-fill-color:var(--band-ink);
+}
+.modal .top .btn:hover:not(:disabled){ background:rgba(255,255,255,.75); border-color:rgba(255,255,255,.95); }
+.modal .content{ padding:0 clamp(15px, 1.9vw, 20px) max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px)); }
+.modal h3, .modal b.small{ letter-spacing:.01em; }
+.actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 0; }
+.actions .full{ grid-column:1 / -1; }
+
+/* ═══════════ 留言墙 ═══════════ */
+.msg-list{ display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+.msg{
+  display:flex; gap:10px; padding:10px 12px; font-size:13.5px; line-height:1.6;
+  background:var(--surface-2); border:1px solid var(--rule-soft); border-radius:var(--r);
+}
+.msg .mav{
+  flex:0 0 30px; width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:10.5px; font-weight:500; color:var(--band-ink); letter-spacing:-.3px;
+}
+.msg .mbody{ flex:1; min-width:0; }
+.msg .meta{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  font-size:11.5px; color:var(--fg-faint); margin-bottom:3px;
+}
+.msg .addr{ font-family:var(--mono); color:var(--fg-soft); }
+.msg .text{ word-break:break-word; }
+.msg .txlink{ color:var(--fg-faint); text-decoration:none; border-bottom:1px dotted var(--rule); }
+.msg .txlink:hover{ color:var(--fg); border-bottom-color:var(--fg); }
+.msg.mine{ border-color:var(--accent); }
+.msg-empty{ border:1px dashed var(--rule); border-radius:var(--r); padding:14px; text-align:center; }
+
+/* 小标签：联系方式上的"公开"、留言墙上的"候选人回复"共用 */
+.tag{
+  font-size:10.5px; letter-spacing:.06em; padding:2px 7px;
+  border:1px solid var(--rule); border-radius:var(--r-pill); color:var(--fg-soft); white-space:nowrap;
+}
+.tag.owner{ border-color:var(--accent); color:var(--accent); }
+
+/* 联系方式：候选人主动公开的那一行。用强调色 + 明说"公开"——
+   链上写什么都是永久的、可被爬的，不能让候选人误以为这是私密的 */
+.contact-row{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin:10px 0 6px; padding:9px 12px; font-size:13px;
+  background:var(--surface-2); border:1px solid var(--accent); border-radius:var(--r);
+}
+.contact-val{ font-family:var(--mono); color:var(--fg); word-break:break-all; }
+
+/* ═══════════ 企业意向 ═══════════
+   比留言墙更安静：一行一家，只要"是谁"和"能不能查"，不要气泡感 */
+.intents{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.intent{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:8px 12px; font-size:12.5px;
+  background:var(--surface-2); border:1px solid var(--rule-soft); border-radius:var(--r);
+}
+.intent .co{ font-family:var(--mono); color:var(--fg-soft); text-decoration:none; }
+.intent .co:hover{ color:var(--fg); }
+.intent .quiet, .intent-note .quiet{ color:var(--fg-faint); text-decoration:none; border-bottom:1px dotted var(--rule); }
+.intent .quiet:hover, .intent-note .quiet:hover{ color:var(--fg); border-bottom-color:var(--fg); }
+.intent-note{ font-size:12.5px; color:var(--fg-soft); line-height:1.65; margin-top:8px;
+  padding-left:10px; border-left:1px solid var(--rule); }
+
+/* ═══════════ 链上简历 ═══════════ */
+.resume{
+  background:var(--surface-2); border:1px solid var(--rule-soft); border-radius:var(--r);
+  padding:13px 15px; margin-top:8px;
+}
+/* 132px 是为了让手机弹窗里也能排成两列（这条简历栏一列一列堆下去，演示时要滑很久） */
+.kv{ display:grid; grid-template-columns:repeat(auto-fit, minmax(132px, 1fr)); gap:10px 14px; margin-bottom:10px; }
+.kv div{ font-size:13px; }
+.kv span{ display:block; margin-bottom:1px; font-size:11px; letter-spacing:.06em; color:var(--fg-faint); }
+.exp{ border-left:1px solid var(--rule); padding:2px 0 2px 11px; margin:9px 0; font-size:13px; line-height:1.6; }
+.exp .t{ color:var(--fg-faint); font-size:11.5px; }
+.hash{ font-family:var(--mono); font-size:11.5px; color:var(--fg-faint); word-break:break-all; }
+.verify-ok{ border-color:var(--ok-line) !important; background:var(--ok-bg) !important; color:var(--ok) !important; }
+.verify-bad{ border-color:var(--bad-line) !important; background:var(--bad-bg) !important; color:var(--bad) !important; }
+.warn{ border-color:var(--warn-line) !important; background:var(--warn-bg) !important; color:var(--warn) !important; }
+.warn code{ background:transparent; border-color:var(--warn-line); }
+.note{ border-color:var(--rule) !important; background:var(--surface-2) !important; }
+
+/* ═══════════ 弹条 ═══════════ */
+.toast{
+  position:fixed; left:50%; bottom:max(22px, calc(env(safe-area-inset-bottom, 0px) + 18px));
+  transform:translateX(-50%); z-index:99;
+  max-width:min(92vw, 520px); padding:12px 18px;
+  background:var(--surface); border:1px solid var(--fg); border-radius:var(--r);
+  color:var(--fg); font-size:13.5px; line-height:1.6; box-shadow:var(--shadow);
+  animation:toastIn .24s var(--ease);
+}
+@keyframes toastIn{ from{ opacity:0; transform:translate(-50%, 8px); } to{ opacity:1; transform:translate(-50%, 0); } }
+.toast a{ color:var(--fg); }
+
+/* ═══════════ 版权页（文档流末尾，不是固定页脚 —— 固定页脚会吃掉卡片墙的可视高度） ═══════════ */
+.colophon{
+  margin-top:clamp(34px, 5vw, 64px); padding-top:18px; border-top:1px solid var(--rule);
+  font-size:12.5px; line-height:1.9; color:var(--fg-faint);
+}
+.colophon .links{ margin:6px 0 0; }
+.colophon .links a{ color:var(--fg-soft); text-decoration-color:var(--rule); }
+.colophon .links a:hover{ color:var(--fg); }
+.colophon .fine{ margin-top:12px; padding-top:0; border-top:0; }
+
+/* ═══════════ 响应式 ═══════════ */
+/* 顶部心跳只留块号：速率那串文字在中等屏幕上挤不下 */
+@media (max-width:1080px){ .ticker .tk-rate{ display:none; } }
+
+@media (max-width:900px){
+  .stats{ grid-template-columns:repeat(2, 1fr); }
+  .stat:nth-child(2n+1){ border-left:0; }
+  .stat:nth-child(n+3){ border-top:1px solid var(--rule); }
+  .podium{ grid-template-columns:1fr; }
+  .podium .rank-1{ box-shadow:inset 0 2px 0 var(--gold); }
+  .cols{ grid-template-columns:1fr; }
+}
+
+@media (max-width:720px){
+  .nav{ gap:10px; }
+  .lnk .lbl{ display:none; }          /* 只留图标，点按区域仍然 ≥36px */
+  .mark{ font-size:14px; }
+  .pill{ height:36px; padding:0 15px; font-size:13.5px; }
+  .cta .pill{ height:44px; padding:0 22px; font-size:14px; }
+  .hero h1{ font-size:clamp(27px, 8vw, 42px); }
+  .lead{ font-size:15px; }
+  .stat .num{ font-size:26px; }
+  .stat .lab{ letter-spacing:.06em; }
+  .actions{ grid-template-columns:1fr; }
+  .card{ padding:14px 15px; }
+  /* 手机上卡片可能一屏十几张，每张都是一层 backdrop 模糊 —— 半径收到 9px 省点合成开销 */
+  .cand{ -webkit-backdrop-filter:blur(9px) saturate(1.3); backdrop-filter:blur(9px) saturate(1.3); }
+  /* iOS 在 font-size < 16px 的输入框上聚焦会自动放大整页，演示时很难看 */
+  input, textarea, select{ font-size:16px; }
+  label{ margin:12px 0 5px; }
+}
+
+@media (max-width:560px){
+  #projectionBtn{ display:none; }     /* 投影是大屏的事，手机上没意义 */
+  .ticker .tk-lab{ display:none; }
+  .ticker{ max-width:46vw; }
+}
+
+@media (max-width:420px){
+  .mark-star{ display:none; }
+  .mark-sub{ display:none; }
+  .nav{ gap:6px; }
+  .mark{ font-size:13.5px; }
+  .ticker{ padding:4px 9px; font-size:11.5px; gap:6px; }
+  .pill .lg{ display:none; }
+  .pill .sm{ display:inline; }
+  .pill{ height:34px; padding:0 13px; font-size:13px; }
+  /* 降一点字号，让「值得一次不看出身的机会。」这行在 320px 上仍然断在 <br /> 处，而不是自己折成两行 */
+  .hero h1{ font-size:clamp(22px, 7.2vw, 34px); }
+  .cta{ gap:8px 14px; }
+  .cta .pill{ width:100%; max-width:260px; height:44px; }
+  .kicker{ font-size:11px; letter-spacing:.08em; }
+  .filter{ max-width:none; }
+}
+
+/* 横屏矮视口（手机横着看 / 投影笔电分屏） */
+@media (max-height:520px) and (orientation:landscape){
+  .hero{ padding:24px 0 28px; }
+  .hero h1{ font-size:clamp(26px, 7.4vh, 40px); }
+  .lead{ margin-top:12px; }
+  .cta{ margin-top:16px; }
+  .sec-head{ padding-top:28px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}
+</style>
+</head>
+<body>
+<i class="meter" id="meter" aria-hidden="true"></i>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="chrome">
+  <div class="chrome-in">
+    <div class="mark">
+      <span class="mark-star" aria-hidden="true">&#10037;</span>
+      <b>TalentScout</b>
+      <span class="mark-sub">链上星探</span>
+    </div>
+    <nav class="nav">
+      <span id="blockTicker" class="ticker"><i class="dot" aria-hidden="true"></i><span class="tk-txt">正在连接 Monad…</span></span>
+      <button id="themeBtn" class="lnk" title="切换白天 / 夜间主题">☀️<span class="lbl"> 切到白天</span></button>
+      <button id="projectionBtn" class="lnk" title="放大字号与版心，适合投到大屏">投影模式</button>
+      <button id="connectBtn" class="pill">
+        <span class="lg">🔌 连接 MetaMask</span><span class="sm">连接钱包</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p id="accountInfo" class="acct">未连接 · 浏览 / 投票数据可只读查看</p>
+
+  <div id="deployHint" class="card warn small" hidden>
+    ⚠️ 前端还没拿到合约信息：先在项目目录运行 <code>npm run compile</code> 和 <code>npm run deploy</code>（部署成功后刷新本页）。
+  </div>
+
+  <div id="offlineBanner" class="card warn small" hidden>
+    ⚠️ <b>当前离线快照</b>：读不到链上数据（RPC 不可达），下面显示的是 <b id="offlineAt">—</b> 抓取的链上快照（区块 <span id="offlineBlock">—</span>）。<b>网络恢复后会自动切回实时数据。</b>
+  </div>
+
+  <section class="hero">
+    <p class="kicker">Monad Blitz @上海 · 2026-10-17 · chainId 10143</p>
+    <h1>被埋没的人，<br />值得一次不看出身的机会。</h1>
+    <p class="lead">
+      招聘方缺的不是判断力，是<b>信号</b>——简历上写的东西很难验证，
+      而「谁愿意为他公开站台」这种信号，从来没有一个地方能留下来。
+      我们把它搬到链上，做成两层：<b>免费投票</b>先让人被看见（1 地址 1 票，<b>买不到</b>）·
+      <b>打赏 MON / 0.01 MON 付费留言</b>是实名、有成本的公开背书。
+      票数过阈值自动进<b>推荐池</b>；简历写在链上，<b>改一个字就能查出来</b>。
+    </p>
+    <div class="cta">
+      <a class="pill" href="#publish">🚀 发布自荐卡</a>
+      <a class="lnk" href="#board">看人才墙 →</a>
+    </div>
+    <p class="fine">
+      合约 <a id="addrScout" target="_blank" rel="noreferrer">加载中…</a>
+      <span class="sep">·</span>
+      简历登记处 <a id="addrProfile" target="_blank" rel="noreferrer">加载中…</a>
+    </p>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="statCands">–</div><div class="lab">自荐卡</div></div>
+    <div class="stat"><div class="num" id="statVotes">–</div><div class="lab">累计票数</div></div>
+    <div class="stat"><div class="num" id="statTips">–</div><div class="lab">支持金 (MON)</div></div>
+    <div class="stat"><div class="num" id="statPool">–</div><div class="lab">已入池人数</div></div>
+  </div>
+
+  <section id="publish" class="card" style="margin-top:clamp(24px, 3.4vw, 40px);">
+    <div class="panel-head">
+      <h3>📝 发布自荐卡</h3>
+      <button id="toggleFormBtn" class="btn ghost small">收起 / 展开</button>
+    </div>
+    <div id="publishForm">
+      <div class="cols">
+        <div>
+          <label>名字（≤40 字符）</label><input id="fName" maxlength="40" placeholder="例如：阿茶" />
+          <label>一句话简介（≤80 字符）</label><input id="fTagline" maxlength="80" placeholder="例如：合约写得比文案快" />
+        </div>
+        <div>
+          <label>技能标签（逗号分隔，≤80 字符）</label><input id="fSkills" maxlength="80" placeholder="Solidity,前端,演示" />
+          <label>链接（逗号分隔，可留空）</label><input id="fLinks" maxlength="120" placeholder="github.com/you,x.com/you" />
+        </div>
+      </div>
+      <label>卡片主题色</label>
+      <div id="themePicker" class="row" style="gap:8px;"></div>
+
+      <div class="panel-head" style="margin-top:20px;">
+        <h3 class="small">📄 链上简历（选填 —— 填了就在发布后自动上链）</h3>
+        <button id="toggleResumeBtn" class="btn ghost small">展开 / 收起</button>
+      </div>
+      <!-- 字段由 app.js 的 resumeFieldsHTML("r") 生成 ——
+           和弹窗里的「编辑简历」共用同一份定义，保证"首次填写"和"以后修改"永远是同一套界面 -->
+      <div id="resumeFields" hidden>
+        <div id="resumeFieldsInner"></div>
+        <p class="small muted" style="margin:10px 0 0;">
+          📌 填了简历就是<b>两笔交易</b>：① 卡片上链 ② 简历上链（简历以后可随时改，每次更新留哈希）。不填则只发卡片。
+        </p>
+      </div>
+
+      <div class="row" style="margin-top:18px;">
+        <button id="publishBtn" class="btn">🚀 发布上链（真实交易）</button>
+        <span id="publishStatus" class="muted small">发布后任何人都能给你投票、打赏、留言</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-head">
+    <div>
+      <p class="kicker">Live leaderboard</p>
+      <h2>🏆 人气榜（实时）</h2>
+    </div>
+    <p class="small muted" style="margin:0;">每 4 秒自动刷新 · 票数达阈值自动进入推荐池</p>
+  </div>
+  <div id="podium" class="podium"></div>
+
+  <div class="sec-head">
+    <div>
+      <p class="kicker">Talent wall / Company view</p>
+      <h2 id="board">🃏 人才墙 / 🏢 企业视图</h2>
+    </div>
+    <div class="tabs">
+      <button id="tabWall" class="tab on">🃏 人才墙</button>
+      <button id="tabPool" class="tab">🏢 企业视图 · 推荐池</button>
+      <input id="skillFilter" class="filter" placeholder="按技能筛选，如 Solidity" hidden />
+    </div>
+  </div>
+  <div id="poolNote" class="card note small muted" hidden>
+    🏢 <b>企业看到的不只是票</b>——这里的人已经被一群陌生人验证过，且每张卡都带一份链上可校验的简历。
+    点「标记意向」即可公开留痕（链上事件，候选人能看到有几家企业对他感兴趣）。
+  </div>
+  <div id="wall" class="grid"></div>
+  <div id="pool" class="grid" hidden></div>
+  <div id="wallEmpty" class="muted small" hidden>还没有自荐卡 —— 用上面的表单发布第一张，或运行 <code>npm run seed</code> 播种样例数据。</div>
+  <div id="poolEmpty" class="muted small" hidden></div>
+
+  <footer class="colophon">
+    <p style="margin:0;">规则 · 免费投票（1 地址 1 票、不可自投）· 打赏任意金额 · 留言 0.01 MON / 条 · 达阈值自动进入推荐池</p>
+    <p class="links">
+      <a href="https://faucet.monad.xyz" target="_blank" rel="noreferrer">🚰 水龙头</a> ·
+      <a href="https://testnet.monadscan.com" target="_blank" rel="noreferrer">🔍 Monadscan</a> ·
+      <a href="https://testnet.monadvision.com" target="_blank" rel="noreferrer">🔭 MonadVision</a>
+    </p>
+    <p class="fine">TalentScout · 链上星探 —— Monad Blitz @上海 · 2026-10-17 · 构建于 Monad 测试网（chainId 10143）</p>
+  </footer>
+</main>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<!-- ethers 放在 frontend/vendor/ 里：整个前端目录自包含，
+     可以整包拷走或部署到任意静态托管（不必再依赖 ../node_modules）。
+     注意：仍然必须通过 HTTP 打开（npm run serve 或任意静态服务器）——
+     Chrome 默认禁止 file:// 页面加载同目录子资源，双击 index.html 是打不开的。 -->
+<script src="vendor/ethers.umd.min.js"></script>
+<script src="contract.config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+{
+  "savedAt": "2026-10-17T08:57:45.356Z",
+  "blockNumber": 71778725,
+  "chainId": 10143,
+  "contractAddress": "0xAB01cfA7Da5e44df314bA167C9f262f17CF6dda7",
+  "profileAddress": "0x1d057b116e208dfb83D8D9c9D3E360442311AaDE",
+  "threshold": 5,
+  "candidates": [
+    {
+      "id": 1,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "阿茶",
+      "tagline": "合约写得比文案快，Demo 讲得比代码好",
+      "skills": "Solidity,前端,演示",
+      "links": "",
+      "theme": 0,
+      "votes": 5,
+      "tips": "60000000000000000",
+      "msgCount": 1,
+      "interestCount": 0,
+      "recommended": true
+    },
+    {
+      "id": 2,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "Luna",
+      "tagline": "把复杂协议讲成人话的产品经理",
+      "skills": "产品,叙事,交互",
+      "links": "",
+      "theme": 1,
+      "votes": 5,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 1,
+      "recommended": true
+    },
+    {
+      "id": 3,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "老周",
+      "tagline": "十年后端，一夜上链，不慌",
+      "skills": "Go,Solidity,架构",
+      "links": "",
+      "theme": 2,
+      "votes": 5,
+      "tips": "20000000000000000",
+      "msgCount": 2,
+      "interestCount": 1,
+      "recommended": true
+    },
+    {
+      "id": 4,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "小鹿",
+      "tagline": "设计稿落地率 200%（含老板的份）",
+      "skills": "UI/UX,品牌,插画",
+      "links": "",
+      "theme": 3,
+      "votes": 4,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    },
+    {
+      "id": 5,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "Ken",
+      "tagline": "AI Agent 驯兽师，Prompt 即武器",
+      "skills": "AI,Agent,自动化",
+      "links": "",
+      "theme": 4,
+      "votes": 0,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    },
+    {
+      "id": 6,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "泡泡",
+      "tagline": "链上活动气氛组组长，专治冷场",
+      "skills": "社区,运营,内容",
+      "links": "",
+      "theme": 5,
+      "votes": 0,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    },
+    {
+      "id": 7,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "阿杰",
+      "tagline": "全栈莽夫，两周学完就敢上线",
+      "skills": "全栈,快速原型",
+      "links": "",
+      "theme": 6,
+      "votes": 0,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    },
+    {
+      "id": 8,
+      "owner": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+      "name": "Mia",
+      "tagline": "能把数据讲成故事的工程师",
+      "skills": "数据,可视化,增长",
+      "links": "",
+      "theme": 7,
+      "votes": 0,
+      "tips": "0",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    },
+    {
+      "id": 9,
+      "owner": "0x00b5e6931f31343e504FDb50bD884d44D5Fb3986",
+      "name": "可乐",
+      "tagline": "Web3某社区运营",
+      "skills": "运营",
+      "links": "",
+      "theme": 0,
+      "votes": 0,
+      "tips": "5000000000000000000",
+      "msgCount": 0,
+      "interestCount": 0,
+      "recommended": false
+    }
+  ],
+  "messages": {
+    "1": [
+      "偷偷告诉面试官：这张卡我先投了 🚀"
+    ],
+    "2": [],
+    "3": [
+      "看老周简历挺不错的啊",
+      "谢谢认可！我的联系方式写在链上简历里了，随时约聊 👋"
+    ],
+    "4": [],
+    "5": [],
+    "6": [],
+    "7": [],
+    "8": [],
+    "9": []
+  },
+  "messageMeta": {
+    "1": [
+      {
+        "text": "偷偷告诉面试官：这张卡我先投了 🚀",
+        "from": "0xd1aCf45Ceb549C029C4016cdf10492fD6226aA1C",
+        "tx": "0x6a67f2e31f5b72b9f58f107dadccc2b38dfeaf0308f6b72f9b67531a79bcd987",
+        "block": 71714049
+      }
+    ],
+    "3": [
+      {
+        "text": "看老周简历挺不错的啊",
+        "from": "0x4c0b3c1eFdeEdedC3bca2DEe06b951A1FA9eb551",
+        "tx": "0xcf24e61ecd991157bd39b1957ab3bfc770bd13c8a8389e1340be0e54df490639",
+        "block": 71734583
+      },
+      {
+        "text": "谢谢认可！我的联系方式写在链上简历里了，随时约聊 👋",
+        "from": "0x33Dc3862dD900fE641Cb0C8B7D96a8a11321c39C",
+        "tx": "0xc139760205e4c923d0c4f8dbe4f95bdb8086119305bb40d5143e01ef0ca871ba",
+        "block": 71761774
+      }
+    ]
+  },
+  "interestMeta": {
+    "2": [
+      {
+        "company": "0xd1aCf45Ceb549C029C4016cdf10492fD6226aA1C",
+        "tx": "0x0b4c26005449732496b79bd105d918e7ae525961b31405c91e4809e69f5d3f9d",
+        "block": 71714072
+      }
+    ],
+    "3": [
+      {
+        "company": "0x4c0b3c1eFdeEdedC3bca2DEe06b951A1FA9eb551",
+        "tx": "0x761a9df97ff6bdba72a729eb9afde3331a3aed1887b3cb729b632b490ae9060b",
+        "block": 71734301
+      }
+    ]
+  },
+  "recommendedAt": {
+    "1": {
+      "tx": "0xa403e9853d86dc67df12f343c3eac21be9f76b1549b53a52906d787af392cc7c",
+      "block": 71714888,
+      "votes": 5
+    },
+    "2": {
+      "tx": "0xb8912b962448b3700627206177a80f1825330128ea9c47ac1cac1183819bbf03",
+      "block": 71717385,
+      "votes": 5
+    },
+    "3": {
+      "tx": "0xc768dbf5b0d7e7d1b768f7ed061ad9070623f0552cb4cea4b71e8076159443fa",
+      "block": 71717656,
+      "votes": 5
+    }
+  },
+  "profiles": {
+    "1": {
+      "hash": "0xe718afce98eb9481301441d33b718b1834c4542db961d17fbbf268300f2dad6c",
+      "json": "{\"role\":\"智能合约工程师\",\"city\":\"上海\",\"exp\":\"3 年\",\"edu\":\"本科 · 计算机科学\",\"skills\":[\"Solidity\",\"TypeScript\",\"DeFi\"],\"availability\":\"随时到岗 · 可远程\",\"summary\":\"写过 6 个上主网的合约，最擅长把一个模糊的想法在两周内变成能演示、能上链的东西。喜欢在黑客松现场讲 Demo，能把技术细节讲给非技术的人听。\",\"experience\":[{\"co\":\"某 DeFi 协议\",\"title\":\"合约工程师\",\"time\":\"2024-2026\",\"desc\":\"负责借贷模块与清算逻辑，审计零高危；链上 TVL 峰值 800 万美元\"},{\"co\":\"独立开发者\",\"title\":\"自由职业\",\"time\":\"2023-2024\",\"desc\":\"为 3 个团队做过 NFT / 积分系统的合约开发与部署\"}],\"contact\":\"Telegram @achaa_dev（优先）· acha@hey.com\"}",
+      "updatedAt": 1792222010,
+      "version": 2
+    },
+    "2": {
+      "hash": "0xc0cca63aba633b57c4326cf350b9e9edebede625d43cfa370edb8c67e70bcaa7",
+      "json": "{\"role\":\"产品经理（Web3 方向）\",\"city\":\"杭州\",\"exp\":\"4 年\",\"edu\":\"硕士 · 人机交互\",\"skills\":[\"产品设计\",\"叙事\",\"交互\"],\"availability\":\"两周内到岗 · 可远程\",\"summary\":\"把复杂协议讲成人话是我的核心能力。做过 2 个从 0 到 1 的 Web3 产品，擅长用户访谈、写清楚的需求文档，以及在评审会上替用户说话。\",\"experience\":[{\"co\":\"某钱包团队\",\"title\":\"高级产品经理\",\"time\":\"2023-2026\",\"desc\":\"主导跨链 Swap 体验改版，7 日留存提升 34%\"},{\"co\":\"某交易所\",\"title\":\"产品经理\",\"time\":\"2021-2023\",\"desc\":\"负责理财板块，累计管理规模 3 亿美元\"}],\"contact\":\"X @luna_pm · luna.pm@hey.com\"}",
+      "updatedAt": 1792222015,
+      "version": 2
+    },
+    "3": {
+      "hash": "0x8cd93df42807023e0bfa4aa882ef869a80af9c9a51f311ec041e9b1c3840465a",
+      "json": "{\"role\":\"后端 / 架构工程师\",\"city\":\"北京\",\"exp\":\"10 年\",\"edu\":\"本科 · 软件工程\",\"skills\":[\"Go\",\"Solidity\",\"分布式架构\"],\"availability\":\"一个月内到岗 · 可远程\",\"summary\":\"十年后端，从单体做到微服务再做到链上。不追新词，只问一句：这东西上线后半夜会不会把我叫醒。近一年把 Go 服务与链上合约打通，做过多链索引器。\",\"experience\":[{\"co\":\"某云服务商\",\"title\":\"后端架构师\",\"time\":\"2019-2025\",\"desc\":\"日均 20 亿请求的网关重构，P99 延迟下降 60%\"},{\"co\":\"独立项目\",\"title\":\"链上索引器\",\"time\":\"2025-2026\",\"desc\":\"自建多链事件索引服务，支撑 3 个 DApp 的活动流\"}],\"contact\":\"Telegram @zhou_arch · zhou@hey.com\"}",
+      "updatedAt": 1792222021,
+      "version": 2
+    },
+    "4": {
+      "hash": "0x4932c5743001c1f9feaac482a2905efdd168b4a07befcbc831f7b2e4f0d24747",
+      "json": "{\"role\":\"UI/UX 设计师\",\"city\":\"深圳\",\"exp\":\"5 年\",\"edu\":\"本科 · 视觉传达\",\"skills\":[\"UI/UX\",\"品牌\",\"插画\"],\"availability\":\"随时到岗 · 仅远程\",\"summary\":\"设计稿落地率 200%（含老板的那份需求）。做过交易所、钱包、NFT 市场的界面，也画过整套品牌插画。坚持一件事：任何一个界面，第一屏就要让人知道该点哪里。\",\"experience\":[{\"co\":\"某 NFT 市场\",\"title\":\"设计负责人\",\"time\":\"2023-2026\",\"desc\":\"重建设计系统，落地效率提升一倍；主站改版后转化率 +22%\"},{\"co\":\"设计工作室\",\"title\":\"UI 设计师\",\"time\":\"2021-2023\",\"desc\":\"为 20+ 客户做过品牌与产品界面\"}],\"contact\":\"Telegram @xiaolu_design · X @xiaolu_ux\"}",
+      "updatedAt": 1792222027,
+      "version": 2
+    },
+    "5": {
+      "hash": "0x7810994a7ba5a9a279815ca87ba925cbb65f659a223e939ac63b28135e91c75d",
+      "json": "{\"role\":\"AI 工程师（Agent 方向）\",\"city\":\"上海\",\"exp\":\"2 年\",\"edu\":\"硕士 · 人工智能\",\"skills\":[\"Python\",\"Agent\",\"LLM 应用\"],\"availability\":\"随时到岗 · 可远程\",\"summary\":\"驯养过 30 多个 Agent，处理过它们半夜乱调 API 的现场。熟悉工具调用、多轮规划、评估集搭建；把 Prompt 当工程问题而不是玄学来对待。\",\"experience\":[{\"co\":\"某 AI 创业公司\",\"title\":\"算法工程师\",\"time\":\"2024-2026\",\"desc\":\"搭建客服 Agent，人工转接率下降 45%\"},{\"co\":\"高校实验室\",\"title\":\"研究助理\",\"time\":\"2023-2024\",\"desc\":\"参与对话系统评测集构建，发表 1 篇会议论文\"}],\"contact\":\"Telegram @ken_agent · ken@hey.com\"}",
+      "updatedAt": 1792222031,
+      "version": 2
+    },
+    "6": {
+      "hash": "0x2b1e658417d2d37a0398704144f28fa5633f03126c12b5d2bb05b421428bf409",
+      "json": "{\"role\":\"社区运营 / 内容\",\"city\":\"成都\",\"exp\":\"3 年\",\"edu\":\"本科 · 新闻传播\",\"skills\":[\"社区运营\",\"内容\",\"活动策划\"],\"availability\":\"随时到岗 · 可远程\",\"summary\":\"链上活动气氛组组长，专治冷场。运营过 5 万人规模的社区，办过 40+ 场线上活动；擅长把一条工程进展写成大家愿意转发的故事。\",\"experience\":[{\"co\":\"某公链社区\",\"title\":\"社区负责人\",\"time\":\"2023-2026\",\"desc\":\"社群从 8 千做到 5 万；策划的活动单场最高 1.2 万人参与\"},{\"co\":\"MCN 机构\",\"title\":\"内容运营\",\"time\":\"2022-2023\",\"desc\":\"负责科技类账号，单条最高播放 320 万\"}],\"contact\":\"X @paopao_community（优先）\"}",
+      "updatedAt": 1792222035,
+      "version": 2
+    },
+    "7": {
+      "hash": "0x1baf3156bf1bf8d753fc97d46a97501e392f02b42f65e597aa04e38c4393652b",
+      "json": "{\"role\":\"全栈工程师\",\"city\":\"广州\",\"exp\":\"3 年\",\"edu\":\"本科 · 信息工程\",\"skills\":[\"全栈\",\"React\",\"Node.js\"],\"availability\":\"随时到岗 · 可远程\",\"summary\":\"全栈莽夫，两周学完就敢上线。做过 10 多个从想法到可用产品的项目，前端后端部署都能自己扛；信奉先跑起来，再跑得更好。\",\"experience\":[{\"co\":\"某 SaaS 公司\",\"title\":\"全栈工程师\",\"time\":\"2023-2026\",\"desc\":\"从 0 搭建管理后台与 API，服务 200 家企业客户\"},{\"co\":\"外包团队\",\"title\":\"前端开发\",\"time\":\"2022-2023\",\"desc\":\"交付 15+ 个中小型项目\"}],\"contact\":\"Telegram @ajie_dev · ajie@hey.com\"}",
+      "updatedAt": 1792222041,
+      "version": 2
+    },
+    "8": {
+      "hash": "0x21f564368b113f46c2fecb285ac3edf2c9bef6646a4e3a5a9e34ba2b41512c29",
+      "json": "{\"role\":\"数据工程师 / 增长分析\",\"city\":\"上海\",\"exp\":\"4 年\",\"edu\":\"硕士 · 统计学\",\"skills\":[\"SQL\",\"数据可视化\",\"增长分析\"],\"availability\":\"两周内到岗 · 可远程\",\"summary\":\"能把数据讲成故事的工程师。搭过从采集到看板的整套链路，也做过增长实验的设计与复盘；坚持结论要能被业务直接拿去用。\",\"experience\":[{\"co\":\"某电商平台\",\"title\":\"数据工程师\",\"time\":\"2022-2026\",\"desc\":\"搭建用户行为数仓，支撑 30+ 看板与 A/B 实验平台\"},{\"co\":\"咨询公司\",\"title\":\"数据分析师\",\"time\":\"2021-2022\",\"desc\":\"为消费品牌做增长诊断与指标体系\"}],\"contact\":\"X @mia_data · mia@hey.com\"}",
+      "updatedAt": 1792222046,
+      "version": 2
+    }
+  }
+}
